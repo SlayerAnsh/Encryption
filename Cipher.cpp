@@ -1,4 +1,5 @@
 #include<iostream>
+#include <fstream>
 #include"Cipher.h"
 
 using namespace std;
@@ -31,6 +32,27 @@ string encrypt(string message){
 	return message;
 }
 
+void encryptFile(string filename){
+	fstream file;
+	file.open(filename);
+	if(!file){
+		cout<<"ERROR : File not found\n";
+		return;
+	}
+	string str;
+	int cur;
+	while(!file.eof()){
+		cur = file.tellg();
+		getline(file,str);
+		str = encrypt(str);
+		file.seekg(cur,ios_base::beg);
+		file<<str<<"\n";
+        if(!file.eof())
+            break;
+	}
+	file.close();
+}
+
 string firstLevelDecrypt(string message){
 	BinaryTree tree;
 	tree.createLevelTree(message);
@@ -57,4 +79,25 @@ string decrypt(string message){
 	message = firstLevelDecrypt(message);
 	message = secondLevelDecrypt(message);
 	return message;
+}
+
+void decryptFile(string filename){
+	fstream file;
+	file.open(filename);
+	if(!file){
+		cout<<"ERROR : File not found\n";
+		return;
+	}
+	string str;
+	int cur;
+	while(!file.eof()){
+		cur = file.tellg();
+		getline(file,str);
+		str = decrypt(str);
+		file.seekg(cur,ios_base::beg);
+		file<<str<<"\n";
+        if(!file.eof())
+            break;
+	}
+	file.close();
 }
